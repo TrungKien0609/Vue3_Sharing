@@ -1,0 +1,65 @@
+version: '3'
+networks:
+  laravel_vuejs_crud:
+    driver: bridge
+services:
+  #Frontend
+  frontend_vue2:
+    container_name: frontend_vue2_container
+    build: 
+      context: ./vue2/
+      dockerfile: Dockerfile
+    command: yarn serve
+    ports:
+      - ${VUE2_APP_PORT}:8080
+    volumes:
+      - ./vue2:/frontend_vue2 # phai giong ten WORKDIR moi hot reload duoc. Moi bat dau thi dang dung / folder chu khong phai o WORKDIR folder
+      - /vue2/node_modules/
+    depends_on:
+      - backend
+    networks:
+      - laravel_vuejs_crud
+  frontend_vue3:
+    container_name: frontend_vue3_container
+    build: 
+      context: ./vue3/
+      dockerfile: Dockerfile
+    command: yarn dev --host=0.0.0.0
+    ports:
+      - ${VUE3_APP_PORT}:5173
+    volumes:
+      - ./vue3:/frontend_vue3 # phai giong ten WORKDIR moi hot reload duoc. Moi bat dau thi dang dung / folder chu khong phai o WORKDIR folder
+      - /vue3/node_modules/
+    depends_on:
+      - backend
+    networks:
+      - laravel_vuejs_crud
+  # Backend
+  backend:
+    container_name: backend_container
+    build: 
+      context: ./backend/
+      dockerfile: Dockerfile
+    command: php artisan serve --host=0.0.0.0
+    ports:
+      - ${API_PORT}:8000
+    volumes:
+      - ./backend:/backend
+      - /backend/vendor/
+    depends_on:
+      - db
+    networks:
+      - laravel_vuejs_crud
+  db:
+    container_name: database_container
+    image: mariadb:${MARIA_DB_VERSION}
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - ./backend/docker-volumes-data/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_DATABASE=${DB_DATABASE}
+    networks:
+      - laravel_vuejs_crud
