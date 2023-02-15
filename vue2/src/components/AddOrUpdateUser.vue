@@ -14,8 +14,8 @@
 
 <script lang='ts'>
 import Vue from 'vue'
-import axios from 'axios'
 import { type PropType } from 'vue'
+import axios from 'axios'
 
 interface UserInfo {
   id?: number,

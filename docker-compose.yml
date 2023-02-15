@@ -13,7 +13,7 @@ services:
     ports:
       - ${VUE2_APP_PORT}:8080
     volumes:
-      - ./vue2:/vue2
+      - ./vue2:/frontend_vue2 # phai giong ten WORKDIR moi hot reload duoc. Moi bat dau thi dang dung / folder chu khong phai o WORKDIR folder
       - /vue2/node_modules/
     depends_on:
       - backend
@@ -28,7 +28,7 @@ services:
     ports:
       - ${VUE3_APP_PORT}:5173
     volumes:
-      - ./vue3:/vue3
+      - ./vue3:/frontend_vue3 # phai giong ten WORKDIR moi hot reload duoc. Moi bat dau thi dang dung / folder chu khong phai o WORKDIR folder
       - /vue3/node_modules/
     depends_on:
       - backend
