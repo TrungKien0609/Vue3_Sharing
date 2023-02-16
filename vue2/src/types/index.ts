@@ -1,9 +1,9 @@
 export  type Employee =  {
   id: number,
-  name: string | null,
-  country: string | null,
-  salary: number | null,
-  email: string | null,
-  age: number | null,
+  name: string ,
+  country: string ,
+  salary: number,
+  email: string,
+  age: number,
   updated_at?: Date
 }
