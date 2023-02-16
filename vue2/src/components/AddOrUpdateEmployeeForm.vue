@@ -16,6 +16,7 @@
 import Vue from 'vue'
 import { type PropType } from 'vue'
 import axios from 'axios'
+import { Employee } from '@/types'
 
 interface EmployeeInfo {
   id: number,
@@ -51,7 +52,6 @@ export default Vue.extend({
   methods: {
     async save() {
       const data = {
-        id: this.employeeInfor.id,
         name: this.currentInputEmployeeName,
         email: this.currentInputEmployeeEmail,
         country: this.currentInputEmployeeCountry,
@@ -59,14 +59,15 @@ export default Vue.extend({
         salary: this.currentInputEmployeeSalary
       }
       if (this.isAddOrUpdate) {
-        const res = await axios.post('http://localhost:8000/api/employees', data)
-        this.$emit('saveNewEmployee', res.data)
+        const res = await axios.post<Employee>('http://localhost:8000/api/employees', data)
+        this.$emit('addNewEmployee', res.data)
       } else {
-        const res = await axios.post(`http://localhost:8000/api/employees/${this.employeeInfor.id}`, {
+        const res = await axios.post<Employee>(`http://localhost:8000/api/employees/${this.employeeInfor.id}`, {
           _method: 'PATCH',
+          id: this.employeeInfor.id,
           ...data
         })
-        this.$emit('updateEmployee', data)
+        this.$emit('updateEmployee', res.data)
       }
     }
   }
