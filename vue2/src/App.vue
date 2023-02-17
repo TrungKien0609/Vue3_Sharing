@@ -1,10 +1,10 @@
 <template>
-  <div class='container'>
-    <button class='add_btn' @click='addNewEmployee'>
+  <div class="container">
+    <button class="add_btn" @click='openFormToAddNewEmployee'>
       Add more employee
     </button>
-    <div class='table'>
-      <div class='header'>
+    <div class="table">
+      <div class="header">
         <p style="width: 20%;">Name</p>
         <p style="width: 20%;">Country</p>
         <p style="width: 15%;">Salary</p>
@@ -12,32 +12,32 @@
         <p style="width: 15%;">Age</p>
         <p style="width: 20%;">Action</p>
       </div>
-      <div class='item' v-for='(item, index) in employees' :key='index'>
-        <p style="width: 20%;">{{ item.name }}</p>
-        <p style="width: 20%;">{{ item.country }}</p>
-        <p style="width: 15%;">{{ item.salary }}</p>
-        <p style="width: 35%;">{{ item.email }}</p>
-        <p style="width: 15%;">{{ item.age }}</p>
-        <div class='actions' style="width: 20%;">
-          <button class='btn edit-btn'
-            @click='editEmployee(item.id, item.name, item.email, item.country, item.age, item.salary)'>
+      <div class="item" v-for="(employee, index) in employees" :key="index">
+        <p style="width: 20%;">{{ employee.name }}</p>
+        <p style="width: 20%;">{{ employee.country }}</p>
+        <p style="width: 15%;">{{ employee.salary }}</p>
+        <p style="width: 35%;">{{ employee.email }}</p>
+        <p style="width: 15%;">{{ employee.age }}</p>
+        <div class="actions" style="width: 20%;">
+          <button class="btn edit-btn"
+            @click="openFormToEditEmployee(employee)">
             Edit
           </button>
-          <button class='btn del-btn' @click='deleteEmployee(item.id, index)'>
+          <button class="btn del-btn" @click="deleteEmployee(employee.id, index)">
             Delete
           </button>
         </div>
       </div>
     </div>
-    <AddOrUpdateEmployeeForm @saveNewEmployee='saveNewEmployee' @updateEmployee='updateEmployee' v-if='isShowForm'
-      :isAddOrUpdate='isAddOrUpdate' :employeeInfor='{
+    <AddOrUpdateEmployeeForm @addNewEmployee="addNewEmployee" @updateEmployee="updateEmployee" v-if="isShowForm"
+      :isAddOrUpdate="isAddOrUpdate" :employeeInfor="{
         id: currentEmployeeId,
         name: currentEmployeeName,
         email: currentEmployeeEmail,
         country: currentEmployeeCountry,
         age: currentEmployeeAge,
         salary: currentEmployeeSalary,
-      }' />
+      }" />
 </div>
 </template>
 
@@ -52,69 +52,59 @@ export default Vue.extend({
   data() {
     return {
       employees: [] as Array<Employee>,
-      isAddOrUpdate: null as boolean | null,
-      isShowForm: null as boolean | null,
-      currentEmployeeId: null as number | null,
-      currentEmployeeName: null as string | null,
-      currentEmployeeEmail: null as string | null,
-      currentEmployeeCountry: null as string | null,
-      currentEmployeeAge: null as number | null,
-      currentEmployeeSalary: null as number | null
+      isAddOrUpdate: false,
+      isShowForm: false,
+      currentEmployeeId: 0,
+      currentEmployeeName: '',
+      currentEmployeeEmail: '',
+      currentEmployeeCountry: '',
+      currentEmployeeAge: 0,
+      currentEmployeeSalary: 0
     }
   },
-  created() {
-    const getEmployees = async () => {
-      const res = await axios.get('http://localhost:8000/api/employees')
-      this.employees = res.data
-    }
-    getEmployees()
-  },
-  beforeMount() {
-    console.log('this', this.$el)
-  },
-  mounted() {
-    console.log('mounted', this.$el)
+  async created() {
+    const res = await axios.get('http://localhost:8000/api/employees')
+    this.employees = res.data
   },
   methods: {
-    updateEmployee(data: Employee) {
-      this.employees = this.employees.map((el) => {
-        if (el.id !== data.id) return el
-        else {
-          return {
-            id: data.id,
-            name: data.name,
-            email: data.email,
-            country: data.country,
-            age: data.age,
-            salary: data.salary
-          }
-        }
+    async updateEmployee(employee: Employee) {
+      const res = await axios.post<Employee>(`http://localhost:8000/api/employees/${employee.id}`, {
+        _method: 'PATCH',
+        ...employee
       })
+      this.employees = this.employees.map(el => el.id === employee.id ? employee : el)
+      // this.employees.forEach((el, index) => {
+      //   if (el.id === employee.id) {
+      //     this.$set(this.employees, index, employee)
+      //   }
+      // })
       this.isShowForm = false
     },
-    saveNewEmployee(data: Employee) {
-      this.employees = [...this.employees, data]
+    async addNewEmployee(data: Employee) {
+      const res = await axios.post<Employee>('http://localhost:8000/api/employees', data)
+      // this.employees = [...this.employees, res.data]
+      this.employees.push(res.data)
       this.isShowForm = false
     },
-    addNewEmployee() {
+    openFormToAddNewEmployee() {
       this.isShowForm = true
       this.isAddOrUpdate = true // add new
-      this.currentEmployeeId = null
-      this.currentEmployeeName = null
-      this.currentEmployeeEmail = null
-      this.currentEmployeeCountry = null
-      this.currentEmployeeAge = null
-      this.currentEmployeeSalary = null
+      this.currentEmployeeId = 0
+      this.currentEmployeeName = ''
+      this.currentEmployeeEmail = ''
+      this.currentEmployeeCountry = ''
+      this.currentEmployeeAge = 0
+      this.currentEmployeeSalary = 0
     },
-    editEmployee(id: number, name: string, email: string, country: string, age: number, salary: number) {
+    openFormToEditEmployee(item: Employee) {
       this.isShowForm = true
       this.isAddOrUpdate = false // edit
-      this.currentEmployeeId = id
-      this.currentEmployeeName = name
-      this.currentEmployeeEmail = email
-      this.currentEmployeeCountry = country
-      this.currentEmployeeAge = age
-      this.currentEmployeeSalary = salary
+      this.currentEmployeeId = item.id
+      this.currentEmployeeName = item.name
+      this.currentEmployeeEmail = item.email
+      this.currentEmployeeCountry = item.country
+      this.currentEmployeeAge = item.age
+      this.currentEmployeeSalary = item.salary
     },
     async deleteEmployee(id: number, index: number) {
       const res = await axios.delete(

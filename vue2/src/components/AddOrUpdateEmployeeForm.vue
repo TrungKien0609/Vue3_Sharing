@@ -1,36 +1,28 @@
 <template>
-  <div class='container'>
-    <h1 class='title'>{{ isAddOrUpdate ? 'Add New Employee' : 'Update Employee' }} Form</h1>
-    <div class='form'>
-      <input type='text' v-model='currentInputEmployeeName' placeholder='Name'>
-      <input type='email' v-model='currentInputEmployeeEmail' placeholder='Email'>
-      <input type='text' v-model='currentInputEmployeeCountry' placeholder='Country'>
-      <input type='number' v-model='currentInputEmployeeAge' placeholder='Age'>
-      <input type='number' v-model='currentInputEmployeeSalary' placeholder='Salary'>
+  <div class="container">
+    <h1 class="title">{{ isAddOrUpdate ? "Add New Employee" : "Update Employee" }} Form</h1>
+    <div class="form">
+      <input type="text" v-model="currentInputEmployeeName" placeholder="Name">
+      <input type="email" v-model="currentInputEmployeeEmail" placeholder="Email">
+      <input type="text" v-model="currentInputEmployeeCountry" placeholder="Country">
+      <input type="number" v-model="currentInputEmployeeAge" placeholder="Age">
+      <input type="number" v-model="currentInputEmployeeSalary" placeholder="Salary">
     </div>
-    <button @click='save' class='save-btn bg-green-400 text-white px-3 py-2 rounded-md mt-3 hover:bg-green-600'>Save</button>
+    <button @click="save"
+      class="save-btn bg-green-400 text-white px-3 py-2 rounded-md mt-3 hover:bg-green-600">Save</button>
   </div>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
+import { Employee } from '@/types'
 import Vue from 'vue'
 import { type PropType } from 'vue'
-import axios from 'axios'
-
-interface EmployeeInfo {
-  id: number,
-  name: string,
-  email: string,
-  country: string,
-  age: number,
-  salary: number
-}
 
 export default Vue.extend({
   name: 'AddOrUpdateEmployeeForm',
   props: {
     employeeInfor: {
-      type: Object as PropType<EmployeeInfo>,
+      type: Object as PropType<Omit<Employee, 'updated_at'>>,
       required: true
     },
     isAddOrUpdate: {
@@ -40,18 +32,16 @@ export default Vue.extend({
   },
   data() {
     return {
-      currentInputEmployeeId: this.employeeInfor.id,
       currentInputEmployeeName: this.employeeInfor.name,
       currentInputEmployeeEmail: this.employeeInfor.email,
       currentInputEmployeeCountry: this.employeeInfor.country,
-      currentInputEmployeeAge: this.employeeInfor.age,
-      currentInputEmployeeSalary: this.employeeInfor.salary
+      currentInputEmployeeAge: this.employeeInfor.age === 0 ? null : this.employeeInfor.age,
+      currentInputEmployeeSalary: this.employeeInfor.salary === 0 ? null : this.employeeInfor.salary
     }
   },
   methods: {
-    async save() {
+    save() {
       const data = {
-        id: this.employeeInfor.id,
         name: this.currentInputEmployeeName,
         email: this.currentInputEmployeeEmail,
         country: this.currentInputEmployeeCountry,
@@ -59,15 +49,22 @@ export default Vue.extend({
         salary: this.currentInputEmployeeSalary
       }
       if (this.isAddOrUpdate) {
-        const res = await axios.post('http://localhost:8000/api/employees', data)
-        this.$emit('saveNewEmployee', res.data)
+        this.$emit('addNewEmployee', data)
       } else {
-        const res = await axios.post(`http://localhost:8000/api/employees/${this.employeeInfor.id}`, {
-          _method: 'PATCH',
-          ...data
-        })
-        this.$emit('updateEmployee', data)
+        this.$emit('updateEmployee', { id: this.employeeInfor.id, ...data })
       }
+    }
+  },
+  watch: {
+    employeeInfor: {
+      handler: function (newEmployeeInfor: Employee) {
+        this.currentInputEmployeeName = newEmployeeInfor.name
+        this.currentInputEmployeeEmail = newEmployeeInfor.email
+        this.currentInputEmployeeCountry = newEmployeeInfor.country
+        this.currentInputEmployeeAge = newEmployeeInfor.age === 0 ? null : newEmployeeInfor.age
+        this.currentInputEmployeeSalary = newEmployeeInfor.salary === 0 ? null : newEmployeeInfor.salary
+      },
+      deep: true
     }
   }
 })
@@ -81,10 +78,12 @@ export default Vue.extend({
     text-transform: capitalize;
     margin: 16px 0;
   }
+
   .form {
     display: flex;
     flex-direction: column;
     gap: 10px;
+
     input {
       background-color: #e5e7eb;
       outline: none;
@@ -94,6 +93,7 @@ export default Vue.extend({
       width: 100%;
     }
   }
+
   .save-btn {
     background-color: #4ade80;
     outline: none;
@@ -104,9 +104,9 @@ export default Vue.extend({
     border-radius: 5px;
     margin-top: 12px;
     transition: background-color 0.25s;
+
     &:hover {
       background-color: #16a34a;
     }
   }
-}
-</style>
+}</style>
