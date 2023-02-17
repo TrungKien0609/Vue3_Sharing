@@ -5,5 +5,5 @@ export  type Employee =  {
   salary: number,
   email: string,
   age: number,
-  updated_at?: Date
+  updated_at: Date
 }
