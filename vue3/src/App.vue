@@ -1,10 +1,10 @@
 <template>
-  <div class='container'>
-    <button class='add_btn' @click='openFormToAddNewEmployee'>
+  <div class="container">
+    <button class="add_btn" @click="openFormToAddNewEmployee">
       Add more employee
     </button>
-    <div class='table'>
-      <div class='header'>
+    <div class="table">
+      <div class="header">
         <p style="width: 20%;">Name</p>
         <p style="width: 20%;">Country</p>
         <p style="width: 15%;">Salary</p>
@@ -12,23 +12,23 @@
         <p style="width: 15%;">Age</p>
         <p style="width: 20%;">Action</p>
       </div>
-      <div class='item' v-for='(item, index) in employees' :key='index'>
-        <p style="width: 20%;">{{ item.name }}</p>
-        <p style="width: 20%;">{{ item.country }}</p>
-        <p style="width: 15%;">{{ item.salary }}</p>
-        <p style="width: 35%;">{{ item.email }}</p>
-        <p style="width: 15%;">{{ item.age }}</p>
-        <div class='actions' style="width: 20%;">
-          <button class='btn edit-btn' @click='openFormToEditEmployee(item)'>
+      <div class="item" v-for="(employee, index) in employees" :key="index">
+        <p style="width: 20%;">{{ employee.name }}</p>
+        <p style="width: 20%;">{{ employee.country }}</p>
+        <p style="width: 15%;">{{ employee.salary }}</p>
+        <p style="width: 35%;">{{ employee.email }}</p>
+        <p style="width: 15%;">{{ employee.age }}</p>
+        <div class="actions" style="width: 20%;">
+          <button class="btn edit-btn" @click="openFormToEditEmployee(employee)">
             Edit
           </button>
-          <button class='btn del-btn' @click='deleteEmployee(item.id, index)'>
+          <button class="btn del-btn" @click="deleteEmployee(employee.id, index)">
             Delete
           </button>
         </div>
       </div>
     </div>
-    <AddOrUpdateEmployeeForm v-if='isShowForm' :isAddOrUpdate='isAddOrUpdate' 
+    <AddOrUpdateEmployeeForm v-if="isShowForm" :isAddOrUpdate="isAddOrUpdate" 
       v-model:currentInputEmployeeName="currentEmployeeName"
       v-model:currentInputEmployeeEmail="currentEmployeeEmail"
       v-model:currentInputEmployeeCountry="currentEmployeeCountry"
@@ -38,19 +38,19 @@
     />
 </div>
 </template>
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref } from 'vue'
 import { useEmployee } from "@/hooks/useEmployee.vue"
 import AddOrUpdateEmployeeForm from "@/components/AddOrUpdateEmployeeForm.vue"
 import type { Employee } from './types';
 
-const { employees, currentEmployeeAge, currentEmployeeCountry, currentEmployeeEmail,currentEmployeeName, currentEmployeeSalary, showEmployee, resetForm, saveNewEmployee, updateEmployee, deleteEmployee } = useEmployee()
-const isAddOrUpdate = ref<boolean>(false)
-const isShowForm = ref<boolean>(false)
+const { employees, currentEmployeeAge, currentEmployeeCountry, currentEmployeeEmail,currentEmployeeName, currentEmployeeSalary, showEmployee, resetCurrentEmployee, addNewEmployee, updateEmployee, deleteEmployee } = useEmployee()
+const isAddOrUpdate = ref(false)
+const isShowForm = ref(false)
 const openFormToAddNewEmployee = () => {
   isShowForm.value = true // show add new form
   isAddOrUpdate.value = true
-  resetForm()
+  resetCurrentEmployee()
 }
 const openFormToEditEmployee = (item: Employee) => {
   isShowForm.value = true
@@ -58,7 +58,7 @@ const openFormToEditEmployee = (item: Employee) => {
   showEmployee(item.id, item.name, item.email, item.country, item.age, item.salary)
 }
 const handleSaveEmployee = async () => {
-  await isAddOrUpdate.value ? saveNewEmployee() : updateEmployee()
+  await isAddOrUpdate.value ? addNewEmployee() : updateEmployee()
   isShowForm.value = false
 }
 </script>

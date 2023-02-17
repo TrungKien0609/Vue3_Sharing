@@ -4,31 +4,31 @@ import axios from 'axios'
 import type { Employee } from "@/types/index"
 
 export function useEmployee() {
-  const employees = ref<Employee[] | []>([])
-  const currentEmployeeId = ref<number | null>(null)
-  const currentEmployeeName = ref<string | null>(null)
-  const currentEmployeeEmail = ref<string | null>(null)
-  const currentEmployeeCountry = ref<string | null>(null)
-  const currentEmployeeAge = ref<number | null>(null)
-  const currentEmployeeSalary = ref<number | null>(null)
+  const employees = ref<Employee[]>([])
+  const currentEmployeeId = ref(0)
+  const currentEmployeeName = ref('')
+  const currentEmployeeEmail = ref('')
+  const currentEmployeeCountry = ref('')
+  const currentEmployeeAge = ref(0)
+  const currentEmployeeSalary = ref(0)
 
   const getEmployees = async () => {
-    const res = await axios.get('http://localhost:8000/api/employees')
+    const res = await axios.get<Employee[]>('http://localhost:8000/api/employees')
     employees.value = res.data
   }
 
   onMounted(getEmployees)
 
-  const resetForm = () => {
-    currentEmployeeId.value = null
-    currentEmployeeAge.value = null
-    currentEmployeeName.value = null
-    currentEmployeeCountry.value = null
-    currentEmployeeEmail.value = null
-    currentEmployeeSalary.value = null
+  const resetCurrentEmployee = () => {
+    currentEmployeeId.value = 0
+    currentEmployeeAge.value = 0
+    currentEmployeeName.value = ''
+    currentEmployeeCountry.value = ''
+    currentEmployeeEmail.value = ''
+    currentEmployeeSalary.value = 0
   }
 
-  const saveNewEmployee = async () => {
+  const addNewEmployee = async () => {
     const data = {
       name: currentEmployeeName.value,
       email: currentEmployeeEmail.value,
@@ -69,7 +69,7 @@ export function useEmployee() {
           country: data.country,
           age: data.age,
           salary: data.salary
-        } as Employee
+        }
       }
     })
   }
@@ -87,9 +87,9 @@ export function useEmployee() {
     currentEmployeeCountry,
     currentEmployeeAge,
     currentEmployeeSalary,
-    saveNewEmployee,
+    addNewEmployee,
     updateEmployee,
-    resetForm,
+    resetCurrentEmployee,
     showEmployee,
     deleteEmployee
   }
