@@ -13,13 +13,13 @@ export function useEmployee() {
   const currentEmployeeSalary = ref<number | null>(null)
 
   const getEmployees = async () => {
-    const res = await axios.get('http://localhost:8000/api/employees')
+    const res = await axios.get<Employee[]>('http://localhost:8000/api/employees')
     employees.value = res.data
   }
 
   onMounted(getEmployees)
 
-  const resetForm = () => {
+  const resetCurrentEmployee = () => {
     currentEmployeeId.value = null
     currentEmployeeAge.value = null
     currentEmployeeName.value = null
@@ -28,7 +28,7 @@ export function useEmployee() {
     currentEmployeeSalary.value = null
   }
 
-  const saveNewEmployee = async () => {
+  const addNewEmployee = async () => {
     const data = {
       name: currentEmployeeName.value,
       email: currentEmployeeEmail.value,
@@ -87,9 +87,9 @@ export function useEmployee() {
     currentEmployeeCountry,
     currentEmployeeAge,
     currentEmployeeSalary,
-    saveNewEmployee,
+    addNewEmployee,
     updateEmployee,
-    resetForm,
+    resetCurrentEmployee,
     showEmployee,
     deleteEmployee
   }

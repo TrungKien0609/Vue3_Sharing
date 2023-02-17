@@ -44,13 +44,13 @@ import { useEmployee } from "@/hooks/useEmployee.vue"
 import AddOrUpdateEmployeeForm from "@/components/AddOrUpdateEmployeeForm.vue"
 import type { Employee } from './types';
 
-const { employees, currentEmployeeAge, currentEmployeeCountry, currentEmployeeEmail,currentEmployeeName, currentEmployeeSalary, showEmployee, resetForm, saveNewEmployee, updateEmployee, deleteEmployee } = useEmployee()
+const { employees, currentEmployeeAge, currentEmployeeCountry, currentEmployeeEmail,currentEmployeeName, currentEmployeeSalary, showEmployee, resetCurrentEmployee, addNewEmployee, updateEmployee, deleteEmployee } = useEmployee()
 const isAddOrUpdate = ref<boolean>(false)
 const isShowForm = ref<boolean>(false)
 const openFormToAddNewEmployee = () => {
   isShowForm.value = true // show add new form
   isAddOrUpdate.value = true
-  resetForm()
+  resetCurrentEmployee()
 }
 const openFormToEditEmployee = (item: Employee) => {
   isShowForm.value = true
@@ -58,7 +58,7 @@ const openFormToEditEmployee = (item: Employee) => {
   showEmployee(item.id, item.name, item.email, item.country, item.age, item.salary)
 }
 const handleSaveEmployee = async () => {
-  await isAddOrUpdate.value ? saveNewEmployee() : updateEmployee()
+  await isAddOrUpdate.value ? addNewEmployee() : updateEmployee()
   isShowForm.value = false
 }
 </script>

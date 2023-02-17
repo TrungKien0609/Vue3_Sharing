@@ -1,6 +1,6 @@
 <template>
   <div class='container'>
-    <button class='add_btn' @click='addNewEmployee'>
+    <button class='add_btn' @click='openFormToAddNewEmployee'>
       Add more employee
     </button>
     <div class='table'>
@@ -20,7 +20,7 @@
         <p style="width: 15%;">{{ item.age }}</p>
         <div class='actions' style="width: 20%;">
           <button class='btn edit-btn'
-            @click='editEmployee(item.id, item.name, item.email, item.country, item.age, item.salary)'>
+            @click='openFormToEditEmployee(item)'>
             Edit
           </button>
           <button class='btn del-btn' @click='deleteEmployee(item.id, index)'>
@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-    <AddOrUpdateEmployeeForm @saveNewEmployee='saveNewEmployee' @updateEmployee='updateEmployee' v-if='isShowForm'
+    <AddOrUpdateEmployeeForm @addNewEmployee='addNewEmployee' @updateEmployee='updateEmployee' v-if='isShowForm'
       :isAddOrUpdate='isAddOrUpdate' :employeeInfor='{
         id: currentEmployeeId,
         name: currentEmployeeName,
@@ -62,41 +62,31 @@ export default Vue.extend({
       currentEmployeeSalary: null as number | null
     }
   },
-  created() {
-    const getEmployees = async () => {
-      const res = await axios.get('http://localhost:8000/api/employees')
-      this.employees = res.data
-    }
-    getEmployees()
-  },
-  beforeMount() {
-    console.log('this', this.$el)
-  },
-  mounted() {
-    console.log('mounted', this.$el)
+  async created() {
+    const res = await axios.get('http://localhost:8000/api/employees')
+    this.employees = res.data
   },
   methods: {
-    updateEmployee(data: Employee) {
-      this.employees = this.employees.map((el) => {
-        if (el.id !== data.id) return el
-        else {
-          return {
-            id: data.id,
-            name: data.name,
-            email: data.email,
-            country: data.country,
-            age: data.age,
-            salary: data.salary
-          }
-        }
+    async updateEmployee(employee: Employee) {
+      const res = await axios.post<Employee>(`http://localhost:8000/api/employees/${employee.id}`, {
+        _method: 'PATCH',
+        ...employee
       })
+      this.employees = this.employees.map(el => el.id === employee.id ? employee : el)
+      // this.employees.forEach((el, index) => {
+      //   if (el.id === employee.id) {
+      //     this.$set(this.employees, index, employee)
+      //   }
+      // })
       this.isShowForm = false
     },
-    saveNewEmployee(data: Employee) {
-      this.employees = [...this.employees, data]
+    async addNewEmployee(data: Employee) {
+      const res = await axios.post<Employee>('http://localhost:8000/api/employees', data)
+      // this.employees = [...this.employees, res.data]
+      this.employees.push(res.data)
       this.isShowForm = false
     },
-    addNewEmployee() {
+    openFormToAddNewEmployee() {
       this.isShowForm = true
       this.isAddOrUpdate = true // add new
       this.currentEmployeeId = null
@@ -106,15 +96,15 @@ export default Vue.extend({
       this.currentEmployeeAge = null
       this.currentEmployeeSalary = null
     },
-    editEmployee(id: number, name: string, email: string, country: string, age: number, salary: number) {
+    openFormToEditEmployee(item: Employee) {
       this.isShowForm = true
       this.isAddOrUpdate = false // edit
-      this.currentEmployeeId = id
-      this.currentEmployeeName = name
-      this.currentEmployeeEmail = email
-      this.currentEmployeeCountry = country
-      this.currentEmployeeAge = age
-      this.currentEmployeeSalary = salary
+      this.currentEmployeeId = item.id
+      this.currentEmployeeName = item.name
+      this.currentEmployeeEmail = item.email
+      this.currentEmployeeCountry = item.country
+      this.currentEmployeeAge = item.age
+      this.currentEmployeeSalary = item.salary
     },
     async deleteEmployee(id: number, index: number) {
       const res = await axios.delete(

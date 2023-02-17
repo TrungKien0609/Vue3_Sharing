@@ -15,7 +15,6 @@
 <script lang='ts'>
 import Vue from 'vue'
 import { type PropType } from 'vue'
-import axios from 'axios'
 
 interface EmployeeInfo {
   id: number,
@@ -49,9 +48,8 @@ export default Vue.extend({
     }
   },
   methods: {
-    async save() {
+    save() {
       const data = {
-        id: this.employeeInfor.id,
         name: this.currentInputEmployeeName,
         email: this.currentInputEmployeeEmail,
         country: this.currentInputEmployeeCountry,
@@ -59,14 +57,9 @@ export default Vue.extend({
         salary: this.currentInputEmployeeSalary
       }
       if (this.isAddOrUpdate) {
-        const res = await axios.post('http://localhost:8000/api/employees', data)
-        this.$emit('saveNewEmployee', res.data)
+        this.$emit('addNewEmployee', data)
       } else {
-        const res = await axios.post(`http://localhost:8000/api/employees/${this.employeeInfor.id}`, {
-          _method: 'PATCH',
-          ...data
-        })
-        this.$emit('updateEmployee', data)
+        this.$emit('updateEmployee', { id: this.employeeInfor.id, ...data })
       }
     }
   }
