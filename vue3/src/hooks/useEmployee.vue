@@ -4,13 +4,13 @@ import axios from 'axios'
 import type { Employee } from "@/types/index"
 
 export function useEmployee() {
-  const employees = ref<Employee[] | []>([])
-  const currentEmployeeId = ref<number | null>(null)
-  const currentEmployeeName = ref<string | null>(null)
-  const currentEmployeeEmail = ref<string | null>(null)
-  const currentEmployeeCountry = ref<string | null>(null)
-  const currentEmployeeAge = ref<number | null>(null)
-  const currentEmployeeSalary = ref<number | null>(null)
+  const employees = ref<Employee[]>([])
+  const currentEmployeeId = ref(0)
+  const currentEmployeeName = ref('')
+  const currentEmployeeEmail = ref('')
+  const currentEmployeeCountry = ref('')
+  const currentEmployeeAge = ref(0)
+  const currentEmployeeSalary = ref(0)
 
   const getEmployees = async () => {
     const res = await axios.get<Employee[]>('http://localhost:8000/api/employees')
@@ -20,12 +20,12 @@ export function useEmployee() {
   onMounted(getEmployees)
 
   const resetCurrentEmployee = () => {
-    currentEmployeeId.value = null
-    currentEmployeeAge.value = null
-    currentEmployeeName.value = null
-    currentEmployeeCountry.value = null
-    currentEmployeeEmail.value = null
-    currentEmployeeSalary.value = null
+    currentEmployeeId.value = 0
+    currentEmployeeAge.value = 0
+    currentEmployeeName.value = ''
+    currentEmployeeCountry.value = ''
+    currentEmployeeEmail.value = ''
+    currentEmployeeSalary.value = 0
   }
 
   const addNewEmployee = async () => {
@@ -69,7 +69,7 @@ export function useEmployee() {
           country: data.country,
           age: data.age,
           salary: data.salary
-        } as Employee
+        }
       }
     })
   }
