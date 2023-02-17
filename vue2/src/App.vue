@@ -1,10 +1,10 @@
 <template>
-  <div class='container'>
-    <button class='add_btn' @click='openFormToAddNewEmployee'>
+  <div class="container">
+    <button class="add_btn" @click='openFormToAddNewEmployee'>
       Add more employee
     </button>
-    <div class='table'>
-      <div class='header'>
+    <div class="table">
+      <div class="header">
         <p style="width: 20%;">Name</p>
         <p style="width: 20%;">Country</p>
         <p style="width: 15%;">Salary</p>
@@ -12,105 +12,74 @@
         <p style="width: 15%;">Age</p>
         <p style="width: 20%;">Action</p>
       </div>
-      <div class='item' v-for='(item, index) in employees' :key='index'>
-        <p style="width: 20%;">{{ item.name }}</p>
-        <p style="width: 20%;">{{ item.country }}</p>
-        <p style="width: 15%;">{{ item.salary }}</p>
-        <p style="width: 35%;">{{ item.email }}</p>
-        <p style="width: 15%;">{{ item.age }}</p>
+      <div class="item" v-for="(employee, index) in employees" :key="index">
+        <p style="width: 20%;">{{ employee.name }}</p>
+        <p style="width: 20%;">{{ employee.country }}</p>
+        <p style="width: 15%;">{{ employee.salary }}</p>
+        <p style="width: 35%;">{{ employee.email }}</p>
+        <p style="width: 15%;">{{ employee.age }}</p>
         <div class='actions' style="width: 20%;">
-          <button class='btn edit-btn'
-            @click='openFormToEditEmployee(item)'>
+          <button class='btn edit-btn' @click='openFormToEditEmployee(employee)'>
             Edit
           </button>
-          <button class='btn del-btn' @click='deleteEmployee(item.id, index)'>
+          <button class='btn del-btn' @click='deleteEmployeeMixin(employee.id, index)'>
             Delete
           </button>
         </div>
       </div>
     </div>
-    <AddOrUpdateEmployeeForm @addNewEmployee='addNewEmployee' @updateEmployee='updateEmployee' v-if='isShowForm'
-      :isAddOrUpdate='isAddOrUpdate' :employeeInfor='{
+    <AddOrUpdateEmployeeForm @addNewEmployee="handleAddNewEmployee" @updateEmployee="handleUpdateEmployee" v-if="isShowForm"
+      :isAddOrUpdate="isAddOrUpdate" :employeeInfor="{
         id: currentEmployeeId,
         name: currentEmployeeName,
         email: currentEmployeeEmail,
         country: currentEmployeeCountry,
         age: currentEmployeeAge,
         salary: currentEmployeeSalary,
-      }' />
+      }" />
 </div>
 </template>
 
 <script lang='ts'>
 import Vue from 'vue'
+import { VueConstructor } from 'vue/types/umd'
 import type { Employee } from '@/types/index'
 import AddOrUpdateEmployeeForm from '@/components/AddOrUpdateEmployeeForm.vue'
-import axios from 'axios'
-export default Vue.extend({
+import employeeMixin from '@/mixins/employeeMixin'
+import otherMixin from '@/mixins/otherMixin'
+
+export default (Vue as VueConstructor<Vue & InstanceType<typeof employeeMixin> & InstanceType<typeof otherMixin>>).extend({
   name: 'App',
+  mixins: [employeeMixin, otherMixin],
   components: { AddOrUpdateEmployeeForm },
   data() {
     return {
-      employees: [] as Array<Employee>,
-      isAddOrUpdate: null as boolean | null,
-      isShowForm: null as boolean | null,
-      currentEmployeeId: null as number | null,
-      currentEmployeeName: null as string | null,
-      currentEmployeeEmail: null as string | null,
-      currentEmployeeCountry: null as string | null,
-      currentEmployeeAge: null as number | null,
-      currentEmployeeSalary: null as number | null
+      isAddOrUpdate: false,
+      isShowForm: false
     }
   },
   async created() {
-    const res = await axios.get('http://localhost:8000/api/employees')
-    this.employees = res.data
+    this.getEmployeesMixin()
   },
   methods: {
-    async updateEmployee(employee: Employee) {
-      const res = await axios.post<Employee>(`http://localhost:8000/api/employees/${employee.id}`, {
-        _method: 'PATCH',
-        ...employee
-      })
-      this.employees = this.employees.map(el => el.id === employee.id ? employee : el)
-      // this.employees.forEach((el, index) => {
-      //   if (el.id === employee.id) {
-      //     this.$set(this.employees, index, employee)
-      //   }
-      // })
-      this.isShowForm = false
-    },
-    async addNewEmployee(data: Employee) {
-      const res = await axios.post<Employee>('http://localhost:8000/api/employees', data)
-      // this.employees = [...this.employees, res.data]
-      this.employees.push(res.data)
-      this.isShowForm = false
-    },
     openFormToAddNewEmployee() {
       this.isShowForm = true
       this.isAddOrUpdate = true // add new
-      this.currentEmployeeId = null
-      this.currentEmployeeName = null
-      this.currentEmployeeEmail = null
-      this.currentEmployeeCountry = null
-      this.currentEmployeeAge = null
-      this.currentEmployeeSalary = null
+      this.resetCurrentEmployeeMixin()
+      console.log('465465')
     },
-    openFormToEditEmployee(item: Employee) {
+    openFormToEditEmployee(employee: Employee) {
       this.isShowForm = true
       this.isAddOrUpdate = false // edit
-      this.currentEmployeeId = item.id
-      this.currentEmployeeName = item.name
-      this.currentEmployeeEmail = item.email
-      this.currentEmployeeCountry = item.country
-      this.currentEmployeeAge = item.age
-      this.currentEmployeeSalary = item.salary
+      this.getCurrentEmployeeMixin(employee)
     },
-    async deleteEmployee(id: number, index: number) {
-      const res = await axios.delete(
-        `http://localhost:8000/api/employees/${id}`
-      )
-      this.employees.splice(index, 1)
+    handleAddNewEmployee(employee: Employee) {
+      this.addNewEmployeeMixin(employee)
+      this.isShowForm = false
+    },
+    handleUpdateEmployee(employee: Employee) {
+      this.updateEmployeeMixin(employee)
+      this.isShowForm = false
     }
   }
 })
@@ -181,4 +150,5 @@ export default Vue.extend({
       }
     }
   }
-}</style>
+}
+</style>

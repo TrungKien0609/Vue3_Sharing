@@ -1,9 +1,9 @@
-export  type Employee =  {
+export type Employee = {
   id: number,
-  name: string ,
-  country: string ,
+  name: string,
+  country: string,
   salary: number,
   email: string,
   age: number,
-  updated_at?: Date
+  updated_at: Date
 }
