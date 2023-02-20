@@ -29,38 +29,51 @@
       </div>
     </div>
     <AddOrUpdateEmployeeForm v-if="isShowForm" :isAddOrUpdate="isAddOrUpdate" 
-      v-model:currentInputEmployeeName="currentEmployeeName"
-      v-model:currentInputEmployeeEmail="currentEmployeeEmail"
-      v-model:currentInputEmployeeCountry="currentEmployeeCountry"
-      v-model:currentInputEmployeeAge="currentEmployeeAge"
-      v-model:currentInputEmployeeSalary="currentEmployeeSalary"
+      v-model:currentInputEmployeeName="currentEmployee.name"
+      v-model:currentInputEmployeeEmail="currentEmployee.email"
+      v-model:currentInputEmployeeCountry="currentEmployee.country"
+      v-model:currentInputEmployeeAge="currentEmployee.age"
+      v-model:currentInputEmployeeSalary="currentEmployee.salary"
       @saveEmployee="handleSaveEmployee"
     />
 </div>
 </template>
-<script setup lang='ts'>
-import { ref } from 'vue'
+<script lang='ts'>
+import { defineComponent } from 'vue'
 import { useEmployee } from "@/hooks/useEmployee.vue"
-import AddOrUpdateEmployeeForm from "@/components/AddOrUpdateEmployeeForm.vue"
-import type { Employee } from './types';
+import AddOrUpdateEmployeeForm from '@/components/AddOrUpdateEmployeeForm.vue'
+import type { Employee } from '@/types';
 
-const { employees, currentEmployeeAge, currentEmployeeCountry, currentEmployeeEmail,currentEmployeeName, currentEmployeeSalary, showEmployee, resetCurrentEmployee, addNewEmployee, updateEmployee, deleteEmployee } = useEmployee()
-const isAddOrUpdate = ref(false)
-const isShowForm = ref(false)
-const openFormToAddNewEmployee = () => {
-  isShowForm.value = true // show add new form
-  isAddOrUpdate.value = true
-  resetCurrentEmployee()
-}
-const openFormToEditEmployee = (item: Employee) => {
-  isShowForm.value = true
-  isAddOrUpdate.value = false // show edit form
-  showEmployee(item.id, item.name, item.email, item.country, item.age, item.salary)
-}
-const handleSaveEmployee = async () => {
-  await isAddOrUpdate.value ? addNewEmployee() : updateEmployee()
-  isShowForm.value = false
-}
+export default defineComponent({
+  setup(props, context) {
+    console.log("context", context)
+    return useEmployee()
+    // { employees, currentEmployee, showEmployee, resetCurrentEmployee, addNewEmployee, updateEmployee, deleteEmployee }
+  },
+  components: {AddOrUpdateEmployeeForm},
+  data() {
+    return {
+      isAddOrUpdate: false,
+      isShowForm: false
+    }
+  },
+  methods: {
+    openFormToAddNewEmployee(){
+      this.isShowForm = true 
+      this.isAddOrUpdate = true // show add new form
+      this.resetCurrentEmployee()
+    },
+    openFormToEditEmployee(employee: Employee) {
+      this.isShowForm = true
+      this.isAddOrUpdate = false // show edit form
+      this.showEmployee(employee.id, employee.name, employee.email, employee.country, employee.age, employee.salary)
+    },
+    async handleSaveEmployee() {
+      await this.isAddOrUpdate ? this.addNewEmployee() : this.updateEmployee()
+      this.isShowForm = false
+    }
+  },
+})
 </script>
 <style scoped lang="scss">
 .container {
