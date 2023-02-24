@@ -7,3 +7,8 @@ export  type Employee =  {
   age: number,
   updated_at: Date
 }
+
+export type CurrentEmployeeNameAndEmail =  {
+  currentEmployeeEmail: string
+  currentEmployName: string
+}

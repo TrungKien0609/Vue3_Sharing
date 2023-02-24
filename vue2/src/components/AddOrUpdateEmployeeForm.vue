@@ -14,9 +14,9 @@
 </template>
 
 <script lang="ts">
-import { Employee } from '@/types'
 import Vue from 'vue'
 import { type PropType } from 'vue'
+import { Employee, CurrentEmployeeNameAndEmail } from '@/types'
 
 export default Vue.extend({
   name: 'AddOrUpdateEmployeeForm',
@@ -65,6 +65,18 @@ export default Vue.extend({
         this.currentInputEmployeeSalary = newEmployeeInfor.salary === 0 ? null : newEmployeeInfor.salary
       },
       deep: true
+    },
+    currentEmployeeNameAndEmail(newValue: CurrentEmployeeNameAndEmail, oldValue: CurrentEmployeeNameAndEmail) {
+      console.log('new value', newValue)
+      console.log('old value', oldValue)
+    }
+  },
+  computed: {
+    currentEmployeeNameAndEmail(): CurrentEmployeeNameAndEmail {
+      return {
+        currentEmployeeEmail: this.currentInputEmployeeEmail,
+        currentEmployName: this.currentInputEmployeeName
+      }
     }
   }
 })
@@ -109,4 +121,5 @@ export default Vue.extend({
       background-color: #16a34a;
     }
   }
-}</style>
+}
+</style>
