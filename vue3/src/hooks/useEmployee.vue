@@ -17,8 +17,6 @@ export function useEmployee() {
     employees.value = res.data
   }
 
-  onMounted(getEmployees)
-
   const resetCurrentEmployee = () => {
     currentEmployeeId.value = 0
     currentEmployeeAge.value = 0
@@ -87,6 +85,7 @@ export function useEmployee() {
     currentEmployeeCountry,
     currentEmployeeAge,
     currentEmployeeSalary,
+    getEmployees,
     addNewEmployee,
     updateEmployee,
     resetCurrentEmployee,
