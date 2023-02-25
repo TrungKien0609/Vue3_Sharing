@@ -14,7 +14,11 @@ import CRUDComponent from '@/components/CRUDComponent.vue'
 import LoadingEffectVue from '@/components/LoadingEffect.vue';
 
 export default defineComponent({
-  components: { CRUDComponent, LoadingEffectVue }
+  components: { CRUDComponent, LoadingEffectVue },
+  errorCaptured(error) {
+    console.log("error", error)
+    return false
+  }
 })
 </script>
 <style scoped lang="scss"></style>
