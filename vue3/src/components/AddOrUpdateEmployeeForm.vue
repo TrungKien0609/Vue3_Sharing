@@ -1,16 +1,26 @@
 <template>
-  <div class="container">
-    <h1 class="title">{{ isAddOrUpdate ? "Add New Employee" : "Update Employee" }} Form</h1>
-    <div class="form">
-      <input type="text" :value="currentInputEmployeeName" @input="$emit('update:currentInputEmployeeName', ($event.target as HTMLInputElement).value)" placeholder="Name">
-      <input type="email" :value="currentInputEmployeeEmail" @input="$emit('update:currentInputEmployeeEmail', ($event.target as HTMLInputElement).value)" placeholder="Email">
-      <input type="text" :value="currentInputEmployeeCountry"  @input="$emit('update:currentInputEmployeeCountry', ($event.target as HTMLInputElement).value)" placeholder="Country">
-      <input type="number" :value="currentInputEmployeeAge === 0 ? '' : currentInputEmployeeAge" @input="$emit('update:currentInputEmployeeAge', ($event.target as HTMLInputElement).value)" placeholder="Age">
-      <input type="number" :value="currentInputEmployeeSalary === 0 ? '': currentInputEmployeeSalary" @input="$emit('update:currentInputEmployeeSalary', ($event.target as HTMLInputElement).value)" placeholder="Salary">
+  <div class="modal_container">
+    <div class="content">
+      <h1 class="title">{{ isAddOrUpdate ? "Add New Employee" : "Update Employee" }} Form</h1>
+      <div class="form">
+        <input type="text" :value="currentInputEmployeeName"
+          @input="$emit('update:currentInputEmployeeName', ($event.target as HTMLInputElement).value)" placeholder="Name">
+        <input type="email" :value="currentInputEmployeeEmail"
+          @input="$emit('update:currentInputEmployeeEmail', ($event.target as HTMLInputElement).value)"
+          placeholder="Email">
+        <input type="text" :value="currentInputEmployeeCountry"
+          @input="$emit('update:currentInputEmployeeCountry', ($event.target as HTMLInputElement).value)"
+          placeholder="Country">
+        <input type="number" :value="currentInputEmployeeAge === 0 ? '' : currentInputEmployeeAge"
+          @input="$emit('update:currentInputEmployeeAge', ($event.target as HTMLInputElement).value)" placeholder="Age">
+        <input type="number" :value="currentInputEmployeeSalary === 0 ? '' : currentInputEmployeeSalary"
+          @input="$emit('update:currentInputEmployeeSalary', ($event.target as HTMLInputElement).value)"
+          placeholder="Salary">
+      </div>
+      <button @click="$emit('saveEmployee')"
+        class="save-btn bg-green-400 text-white px-3 py-2 rounded-md mt-3 hover:bg-green-600">Save</button>
     </div>
-    <button @click="$emit('saveEmployee')"
-      class="save-btn bg-green-400 text-white px-3 py-2 rounded-md mt-3 hover:bg-green-600">Save</button>
-</div>
+  </div>
 </template>
 <script setup lang="ts">
 const props = defineProps<{
@@ -32,43 +42,58 @@ const emit = defineEmits<{
 }>()
 </script>
 <style lang='scss' scoped>
-.container {
-  .title {
-    font-size: 20px;
-    font-weight: 500;
-    text-transform: capitalize;
-    margin: 16px 0;
-  }
+.modal_container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  z-index: 89999;
 
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .content {
+    max-width: 900px;
+    .title {
+      font-size: 20px;
+      font-weight: 500;
+      text-transform: capitalize;
+      margin: 16px 0;
+    }
 
-    input {
-      background-color: #e5e7eb;
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      input {
+        background-color: #e5e7eb;
+        outline: none;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        width: 100%;
+      }
+    }
+
+    .save-btn {
+      background-color: #4ade80;
       outline: none;
       border: none;
-      padding: 8px 16px;
+      cursor: pointer;
+      color: #fff;
+      padding: 8px 12px;
       border-radius: 5px;
-      width: 100%;
+      margin-top: 12px;
+      transition: background-color 0.25s;
+
+      &:hover {
+        background-color: #16a34a;
+      }
     }
   }
 
-  .save-btn {
-    background-color: #4ade80;
-    outline: none;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 5px;
-    margin-top: 12px;
-    transition: background-color 0.25s;
-
-    &:hover {
-      background-color: #16a34a;
-    }
-  }
 }
 </style>
