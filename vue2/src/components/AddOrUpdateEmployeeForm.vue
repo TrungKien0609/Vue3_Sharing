@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="title">{{ isAddOrUpdate ? "Add New Employee" : "Update Employee" }} Form</h1>
     <div class="form">
-      <input type="text" v-model="currentInputEmployeeName" placeholder="Name">
+      <input type="text" :value="currentInputEmployeeName" @input="updateCurrentInputEmployeeName" placeholder="Name">
       <input type="email" v-model="currentInputEmployeeEmail" placeholder="Email">
       <input type="text" v-model="currentInputEmployeeCountry" placeholder="Country">
       <input type="number" v-model="currentInputEmployeeAge" placeholder="Age">
@@ -53,6 +53,9 @@ export default Vue.extend({
       } else {
         this.$emit('updateEmployee', { id: this.employeeInfor.id, ...data })
       }
+    },
+    updateCurrentInputEmployeeName(event: Event) {
+      this.currentInputEmployeeName = (event.target as HTMLInputElement).value
     }
   },
   watch: {
