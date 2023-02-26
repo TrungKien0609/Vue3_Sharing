@@ -30,14 +30,17 @@
       </div>
     </div>
     <AddOrUpdateEmployeeForm @addNewEmployee="addNewEmployee" @updateEmployee="updateEmployee" v-if="isShowForm"
-      :isAddOrUpdate="isAddOrUpdate" :employeeInfor="{
+      v-model='currentEmployeeName'
+      :isAddOrUpdate='isAddOrUpdate'
+      :employeeInfor='{
         id: currentEmployeeId,
         name: currentEmployeeName,
         email: currentEmployeeEmail,
         country: currentEmployeeCountry,
         age: currentEmployeeAge,
         salary: currentEmployeeSalary,
-      }" />
+      }'
+      />
 </div>
 </template>
 

@@ -2,11 +2,11 @@
   <div class="container">
     <h1 class="title">{{ isAddOrUpdate ? "Add New Employee" : "Update Employee" }} Form</h1>
     <div class="form">
-      <input type="text" :value="currentInputEmployeeName" @input="updateCurrentInputEmployeeName" placeholder="Name">
-      <input type="email" v-model="currentInputEmployeeEmail" placeholder="Email">
+      <input type="text" v-bind="$attrs" v-on="inputListerners"  placeholder="Name">
+      <!-- <input type="email" v-model="currentInputEmployeeEmail" placeholder="Email">
       <input type="text" v-model="currentInputEmployeeCountry" placeholder="Country">
       <input type="number" v-model="currentInputEmployeeAge" placeholder="Age">
-      <input type="number" v-model="currentInputEmployeeSalary" placeholder="Salary">
+      <input type="number" v-model="currentInputEmployeeSalary" placeholder="Salary"> -->
     </div>
     <button @click="save"
       class="save-btn bg-green-400 text-white px-3 py-2 rounded-md mt-3 hover:bg-green-600">Save</button>
@@ -28,11 +28,15 @@ export default Vue.extend({
     isAddOrUpdate: {
       type: Boolean,
       required: true
+    },
+    customVModelCurrentEmployeeName: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
-      currentInputEmployeeName: this.employeeInfor.name,
+      currentInputEmployeeName: this.customVModelCurrentEmployeeName,
       currentInputEmployeeEmail: this.employeeInfor.email,
       currentInputEmployeeCountry: this.employeeInfor.country,
       currentInputEmployeeAge: this.employeeInfor.age === 0 ? null : this.employeeInfor.age,
@@ -53,9 +57,6 @@ export default Vue.extend({
       } else {
         this.$emit('updateEmployee', { id: this.employeeInfor.id, ...data })
       }
-    },
-    updateCurrentInputEmployeeName(event: Event) {
-      this.currentInputEmployeeName = (event.target as HTMLInputElement).value
     }
   },
   watch: {
@@ -69,6 +70,19 @@ export default Vue.extend({
       },
       deep: true
     }
+  },
+  computed: {
+    inputListerners() {
+      return {
+        ...this.$listeners,
+        input: (event: Event) => {
+          this.$emit('input', (event.target as HTMLInputElement).value)
+        }
+      }
+    }
+  },
+  created() {
+    console.log('this', this.$listeners.input)
   }
 })
 </script>
