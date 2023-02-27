@@ -30,7 +30,6 @@ const emit = defineEmits<{
   (event: 'update', currentInputEmployeeSalary: number): void
   (event: "saveEmployee"): void
 }>()
-
 </script>
 <style lang='scss' scoped>
 .container {

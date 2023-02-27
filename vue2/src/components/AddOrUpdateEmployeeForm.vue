@@ -31,7 +31,6 @@ export default Vue.extend({
   },
   data() {
     return {
-      currentInputEmployeeId: this.employeeInfor.id,
       currentInputEmployeeName: this.employeeInfor.name,
       currentInputEmployeeEmail: this.employeeInfor.email,
       currentInputEmployeeCountry: this.employeeInfor.country,
@@ -109,5 +108,4 @@ export default Vue.extend({
       background-color: #16a34a;
     }
   }
-}
-</style>
+}</style>

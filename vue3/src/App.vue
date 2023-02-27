@@ -29,11 +29,11 @@
       </div>
     </div>
     <AddOrUpdateEmployeeForm v-if="isShowForm" :isAddOrUpdate="isAddOrUpdate" 
-      v-model:currentInputEmployeeName="currentEmployeeName"
-      v-model:currentInputEmployeeEmail="currentEmployeeEmail"
-      v-model:currentInputEmployeeCountry="currentEmployeeCountry"
-      v-model:currentInputEmployeeAge="currentEmployeeAge"
-      v-model:currentInputEmployeeSalary="currentEmployeeSalary"
+      v-model:currentInputEmployeeName="currentEmployee.name"
+      v-model:currentInputEmployeeEmail="currentEmployee.email"
+      v-model:currentInputEmployeeCountry="currentEmployee.country"
+      v-model:currentInputEmployeeAge="currentEmployee.age"
+      v-model:currentInputEmployeeSalary="currentEmployee.salary"
       @saveEmployee="handleSaveEmployee"
     />
 </div>
@@ -44,7 +44,7 @@ import { useEmployee } from "@/hooks/useEmployee.vue"
 import AddOrUpdateEmployeeForm from "@/components/AddOrUpdateEmployeeForm.vue"
 import type { Employee } from './types';
 
-const { employees, currentEmployeeAge, currentEmployeeCountry, currentEmployeeEmail,currentEmployeeName, currentEmployeeSalary, showEmployee, resetCurrentEmployee, addNewEmployee, updateEmployee, deleteEmployee } = useEmployee()
+const { employees, currentEmployee, showEmployee, resetCurrentEmployee, addNewEmployee, updateEmployee, deleteEmployee } = useEmployee()
 const isAddOrUpdate = ref(false)
 const isShowForm = ref(false)
 const openFormToAddNewEmployee = () => {
